@@ -298,20 +298,20 @@ class Eboekhouden_Export_Model_Export_Sales
 
             $aOrderItems = $oContainer->getItemsCollection();
             $fDiscountLeft = $oContainer->getBaseDiscountAmount();
-
+            
             $totalBaseAmountItems = 0;
             $totalBaseAmountInclTaxItems = 0;
             $totalBaseTaxItems = 0;
-
+            
             foreach ($aOrderItems as $oItem)
                 /* @var $oItem Mage_Sales_Model_Order_Invoice_Item */
             {
                 $fDbProductTaxAmount = $oItem->getBaseTaxAmount();
-                //add to order totals
+                //add to order totals 
                 $totalBaseTaxItems += $fDbProductTaxAmount;
                 $totalBaseAmountItems += $oItem->getBaseRowTotal();
                 $totalBaseAmountInclTaxItems += $oItem->getBaseRowTotalInclTax();
-
+                
                 $aWeeItems = $this->_oWeeeHelper->getApplied( $oItem );
                 foreach ( $aWeeItems as $aWeeData )
                 {
@@ -383,11 +383,11 @@ class Eboekhouden_Export_Model_Export_Sales
                         $fShipFactor = $oContainer->getBaseShippingAmount() / $fBaseShippingAmount;
                     }
                 }
-                //add to order totals
+                //add to order totals 
                 $totalBaseTaxItems += $fShipFactor * $oContainer->getBaseShippingTaxAmount();
                 $totalBaseAmountItems += $fShipFactor * $oContainer->getBaseShippingAmount();
                 $totalBaseAmountInclTaxItems += $fShipFactor * $oContainer->getBaseShippingInclTax();
-
+                
                 // Shipping & Handling cost, create a virtual order_item
                 $oShippingItem = new Mage_Sales_Model_Order_Item();
                 $oShippingItem->setStoreId($iStoreId);
@@ -420,42 +420,32 @@ class Eboekhouden_Export_Model_Export_Sales
 
                 $sXml .= $this->_getItemXml($oContainer, $oAdjustmentItem);
             }
-
-	        if ($oContainer instanceof Mage_Sales_Model_Order_Invoice) {
-		        //add additional fee price (in case invoice price is higher then itemprice + shipping)
-		        $orderGrandTotal = round(floatval($oOrder->getGrandTotal()), 4) -  $oOrder->getDiscountInvoiced();
-
-
-
-		        if (0.0001 < abs($orderGrandTotal - round($totalBaseAmountInclTaxItems, 4))) {
-
-
-			        $orderSubtotal = round(floatval($oOrder->getSubtotal()) + floatval($oOrder->getBaseShippingAmount()), 4);
-			        $orderTaxAmount = round(floatval($oOrder->getTaxAmount()), 4);
-
-
-			        $feeRowTotal = round($totalBaseAmountItems, 4) - $orderSubtotal;
-			        $feeRowTotalInclTax = $orderGrandTotal - round($totalBaseAmountInclTaxItems, 4) ;
-			        $feeTaxAmount = round($totalBaseTaxItems, 4) - $orderTaxAmount;
-
-
-			        $feeItem = new Mage_Sales_Model_Order_Item();
-			        $feeItem->setStoreId($iStoreId);
-			        $feeItem->setProductId('payment_fee');
-			        $feeItem->setBaseRowTotal($feeRowTotal);
-			        $feeItem->setBaseRowTotalInclTax($feeRowTotalInclTax);
-			        $feeItem->setBaseTaxAmount($feeTaxAmount);
-			        $feeItem->setBaseDiscountAmount(0);
-
-
-			        $sXml .= $this->_getItemXml($oContainer, $feeItem);
-		        }
-	        }
-
+            
+            //add additional fee price (in case invoice price is higher then itemprice + shipping)
+            $orderGrandTotal = round(floatval($oOrder->getGrandTotal()), 4);
+            if (0.0001 < abs($orderGrandTotal - round($totalBaseAmountInclTaxItems, 4))) {
+            
+                $orderSubtotal = round(floatval($oOrder->getSubtotal()) + floatval($oOrder->getBaseShippingAmount()), 4);
+                $orderTaxAmount =  round(floatval($oOrder->getTaxAmount()), 4);
+            
+                $feeRowTotal = $orderSubtotal - round($totalBaseAmountItems, 4);
+                $feeRowTotalInclTax =  $orderGrandTotal - round($totalBaseAmountInclTaxItems, 4);
+                $feeTaxAmount = $orderTaxAmount - round($totalBaseTaxItems, 4);
+                
+                $feeItem = new Mage_Sales_Model_Order_Item();
+                $feeItem->setStoreId($iStoreId);
+                $feeItem->setProductId('payment_fee');
+                $feeItem->setBaseRowTotal($feeRowTotal);
+                $feeItem->setBaseRowTotalInclTax($feeRowTotalInclTax);
+                $feeItem->setBaseTaxAmount($feeTaxAmount);
+                $feeItem->setBaseDiscountAmount(0);
+            
+                $sXml .= $this->_getItemXml($oContainer, $feeItem);
+            }
+            
             $sXml .= '
     </MUTATIEREGELS>
   </MUTATIE>';
-
 
             $sPostAction = (!empty($iExistingMutatieNr)) ? 'ALTER_MUTATIE' : 'ADD_MUTATIE';
             list($sThisMutatieNr, $iThisExist, $sThisErrorMsg, $sThisInfoMsg) = $this->_postMutatieXml($sXml,
@@ -581,9 +571,11 @@ class Eboekhouden_Export_Model_Export_Sales
                     {
                         $iOrdersExist++;
                     }
-
-                    $sErrorMsg .= Mage::helper('Eboekhouden_Export')->__('Fout %s: %s', $oData->ERROR->CODE,
-                                                                  $oData->ERROR->DESCRIPTION) . "\n";
+                    else
+                    {
+                        $sErrorMsg .= Mage::helper('Eboekhouden_Export')->__('Fout %s: %s', $oData->ERROR->CODE,
+                                                                      $oData->ERROR->DESCRIPTION) . "\n";
+                    }
                 }
                 elseif ('OK' == strval($oData->RESULT))
                 {
