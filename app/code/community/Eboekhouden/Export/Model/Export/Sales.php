@@ -188,6 +188,8 @@ class Eboekhouden_Export_Model_Export_Sales
         $oAccountNumberHelper = Mage::helper('Eboekhouden_Export/accountNumber');
         /* @var Eboekhouden_Export_Helper_AccountNumber $oAccountNumberHelper */
 
+        $aSettings = $oHelper->getConnectorSettings($oContainer->getStore());
+
         $sXml = '';
         $iCountAdded = 0;
         $iCountExist = 0;
@@ -316,6 +318,19 @@ class Eboekhouden_Export_Model_Export_Sales
 
                 $sVatCode = $this->_Find_Ebvatcode((int) $oItem->getOrderItem()->getTaxPercent(), $oOrder, $oItem->getOrderItem()->getProduct()->getTaxClassId());
 
+                $sProductId = $oItem->getProductId();
+                $sProductCode = 'ID: ' . $sProductId;
+                $oProduct = Mage::getModel('catalog/product');
+                /* @var $oProduct Mage_Catalog_Model_Product */
+                $oProduct->setStoreId($iStoreId);
+                $oProduct->load($sProductId);
+                if (!empty($oProduct) && $oProduct->hasData('sku'))
+                {
+                    $sProductCode = $oProduct->getSku();
+                    $iGbRekening = $oProduct->getEboekhoudenGrootboekrekening();
+                    $iCostcenter = $oProduct->getEboekhoudenCostcenter();
+                    $iProductTaxClassId = $oProduct->getTaxClassId();
+                }
 
                 $iGbRekening = $oAccountNumberHelper->getLedgerAccountNumber($iGbRekening,$oContainer,$oItem);
                 if (empty($iGbRekening))
@@ -443,7 +458,6 @@ class Eboekhouden_Export_Model_Export_Sales
             $sXml .= '
     </MUTATIEREGELS>
   </MUTATIE>';
-
 
             $sPostAction = (!empty($iExistingMutatieNr)) ? 'ALTER_MUTATIE' : 'ADD_MUTATIE';
             list($sThisMutatieNr, $iThisExist, $sThisErrorMsg, $sThisInfoMsg) = $this->_postMutatieXml($sXml,
