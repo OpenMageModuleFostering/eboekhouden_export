@@ -35,7 +35,7 @@
     <modules>
         <Eboekhouden_Export>
             <!-- When changing version: Don't forget to rename the mysql4-install script in sql/eboekhouden_setup -->
-            <version>4.1.31</version>
+            <version>4.1.35</version>
         </Eboekhouden_Export>
     </modules>
 
@@ -162,6 +162,7 @@
             <settings>
                 <showxml>0</showxml>
                 <shippingledgeraccount>8000</shippingledgeraccount>
+                <paymentfeeledgeraccount>8000</paymentfeeledgeraccount>
             </settings>
             <vatcodes>
                 <vatcode_HOOG_VERK>=NOT-USED=</vatcode_HOOG_VERK>
