@@ -395,7 +395,7 @@ class Eboekhouden_Export_Model_Export_Sales
                                                                    $iStoreId));
                 $sXml .= $this->_getItemXml($oContainer, $oShippingItem);
             }
-            
+
             // Add adjustment in case it exists (for credit memos)
             if ((float)$oContainer->getAdjustment() !== 0) {
                 $oAdjustmentItem = new Mage_Sales_Model_Order_Item();
@@ -404,7 +404,7 @@ class Eboekhouden_Export_Model_Export_Sales
                 $oAdjustmentItem->setBaseRowTotal($oContainer->getAdjustment());
                 $oAdjustmentItem->setBaseRowTotalInclTax($oContainer->getAdjustment());
                 $oAdjustmentItem->setBaseTaxAmount(0);
-                
+
                 $sXml .= $this->_getItemXml($oContainer, $oAdjustmentItem);
             }
             $sXml .= '
@@ -609,10 +609,12 @@ class Eboekhouden_Export_Model_Export_Sales
             $fPriceIn = $oItem->getBaseRowTotalInclTax();
             if (empty($fPriceIn)) // Can be 0 and invalid in Magento 1.3.x
             {
-                // Receiving TotalPriceInclTax failed, probably Magento 1.3.x or complicated one
-                // Use fallback calculation method.
-                $fPriceIn = $oItem->getBaseRowTotal() * $fVatFactor;
-                $sComment .= ' ['.$fPriceIn.' = '.$oItem->getBaseRowTotal().' * '.$fVatFactor.'] ';
+                if ($oItem->getBaseRowTotal() !== null) {
+                    // Receiving TotalPriceInclTax failed, probably Magento 1.3.x or complicated one
+                    // Use fallback calculation method.
+                    $fPriceIn = $oItem->getBaseRowTotal() * $fVatFactor;
+                    $sComment .= ' ['.$fPriceIn.' = '.$oItem->getBaseRowTotal().' * '.$fVatFactor.'] ';
+                }
             }
 
             $fDiscountAmount = $oItem->getBaseDiscountAmount();
@@ -644,6 +646,14 @@ class Eboekhouden_Export_Model_Export_Sales
             }
 
             $fPriceEx = $fPriceIn / $fVatFactor;
+
+            // When the base_row_total is null, use base prices
+            // This occurs when bundled products are used
+            if (empty($fPriceIn) && $oItem->getBaseRowTotal() === null) {
+                $sComment .= ' ['.$fPriceIn.' = Base price: '.$oItem->getBasePriceInclTax().'] ';
+                $fPriceIn = $oItem->getBasePriceInclTax();
+                $fPriceEx = $oItem->getBasePrice();
+            }
 
             $fTaxAmount = $fPriceIn - $fPriceEx;
             if (empty($fTaxAmount))
