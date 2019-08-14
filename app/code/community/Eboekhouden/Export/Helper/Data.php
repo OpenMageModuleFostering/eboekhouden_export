@@ -51,6 +51,7 @@ class Eboekhouden_Export_Helper_Data extends Mage_Core_Helper_Abstract
         $aSettings['sConWord'] = trim(Mage::getStoreConfig('eboekhouden/connector/securitycode1', $mStore));
         $aSettings['sConGuid'] = trim(Mage::getStoreConfig('eboekhouden/connector/securitycode2', $mStore));
         $aSettings['sShipLedgerAcc'] = intval( trim(Mage::getStoreConfig('eboekhouden/settings/shippingledgeraccount', $mStore)) );
+        $aSettings['sAdjustmentLedgerAcc'] = intval( trim(Mage::getStoreConfig('eboekhouden/settings/adjustmentledgeraccount', $mStore)) );
         $aSettings['sShipCostcenter'] = intval( trim(Mage::getStoreConfig('eboekhouden/settings/shippingcostcenter', $mStore)) );
         if ( empty($aSettings['sShipLedgerAcc']) )
         {

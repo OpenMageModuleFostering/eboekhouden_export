@@ -358,6 +358,7 @@ class Eboekhouden_Export_Model_Export_Sales
                 $sXml .= $this->_getItemXml($oContainer, $oItem); // Add XML for normal item
                 $fDiscountLeft -= $oItem->getBaseDiscountAmount();
             }
+            // Add shipping
             if (0 < $oContainer->getBaseShippingAmount())
             {
                 $fShipFactor = 1;
@@ -393,6 +394,18 @@ class Eboekhouden_Export_Model_Export_Sales
                 $oShippingItem->setTaxClassId(Mage::getStoreConfig(Mage_Tax_Model_Config::CONFIG_XML_PATH_SHIPPING_TAX_CLASS,
                                                                    $iStoreId));
                 $sXml .= $this->_getItemXml($oContainer, $oShippingItem);
+            }
+            
+            // Add adjustment in case it exists (for credit memos)
+            if ((float)$oContainer->getAdjustment() !== 0) {
+                $oAdjustmentItem = new Mage_Sales_Model_Order_Item();
+                $oAdjustmentItem->setStoreId($iStoreId);
+                $oAdjustmentItem->setProductId('adjustment_fee');
+                $oAdjustmentItem->setBaseRowTotal($oContainer->getAdjustment());
+                $oAdjustmentItem->setBaseRowTotalInclTax($oContainer->getAdjustment());
+                $oAdjustmentItem->setBaseTaxAmount(0);
+                
+                $sXml .= $this->_getItemXml($oContainer, $oAdjustmentItem);
             }
             $sXml .= '
     </MUTATIEREGELS>
@@ -661,6 +674,10 @@ class Eboekhouden_Export_Model_Export_Sales
                     $iCostcenter = $aSettings['sShipCostcenter'];
                     $iProductTaxClassId = $oItem->getTaxClassId();
                     $sComment .= 'Shipping';
+                }
+                else if ('adjustment_fee' == $sProductId) {
+                    $iGbRekening = $aSettings['sAdjustmentLedgerAcc'];
+                    $sComment .= 'Adjustment';
                 }
                 else
                 {
@@ -997,6 +1014,10 @@ class Eboekhouden_Export_Model_Export_Sales
         elseif ('shipping' == $sProductId)
         {
             $sType = 'shipping';
+        }
+        elseif ('adjustment_fee' == $sProductId)
+        {
+            $sType = 'adjustment';
         }
         elseif ( !empty($oOrderItem) )
         {
