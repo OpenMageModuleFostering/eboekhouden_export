@@ -1,0 +1,67 @@
+<?php
+/**
+ * NOTICE OF LICENSE
+ *
+ * The MIT License
+ *
+ * Copyright (c) 2012 e-Boekhouden.nl
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package    Eboekhouden_Export
+ * @copyright  Copyright (c) 2012 e-Boekhouden.nl
+ * @license    http://opensource.org/licenses/mit-license.php  The MIT License
+ * @author     e-Boekhouden.nl
+ */
+
+class Eboekhouden_Export_Model_Import_Gbcodes extends Eboekhouden_Export_Model_Import_Ebcode
+{
+    protected $iDefault = 8000;
+
+    /**
+     * Import Grootboek rekening codes from e-Boekhouden.nl.
+     *
+     * @return array with ($aResult,$sErrorMsg). $aResult: key=code value=desc
+     */
+    public function importCodes()
+    {
+        $aResult = array();
+        $oData = $this->getCodes('LIST_GBCODE');
+        if (!empty($oData))
+        {
+            if (!isset($oData->RESULT->GBCODES))
+            {
+                $sErrorMsg = Mage::helper('Eboekhouden_Export')
+                                     ->__('Fout in van API ontvangen XML: RESULT.GBCODES is niet gevonden') . "\n";
+                Mage::getSingleton('adminhtml/session')->addError(nl2br($sErrorMsg));
+            }
+            else
+            {
+                foreach ($oData->RESULT->GBCODES->GBCODE as $oGbCode)
+                {
+                    $iCode = intval($oGbCode->CODE);
+                    $sDesc = $iCode . ' - ' . strval($oGbCode->OMSCHRIJVING);
+                    $aResult[$iCode] = $sDesc;
+                }
+            }
+        }
+        return $aResult;
+    }
+
+}

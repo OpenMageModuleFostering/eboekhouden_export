@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<package>
+    <name>EBoekhouden_Export</name>
+    <version>4.1.17</version>
+    <stability>stable</stability>
+    <license uri="http://opensource.org/licenses/mit-license.php">MIT</license>
+    <channel>community</channel>
+    <extends/>
+    <summary>Directe export van bestellingen en facturen naar www.e-Boekhouden.nl</summary>
+    <description>Directe export van bestellingen naar www.e-Boekhouden.nl&#xD;
+&#xD;
+Heeft u een webshop van Magento? Dan kunt u voortaan met 1 klik op de knop alle bestellingen van uw webshop direct verwerken in uw boekhouding. Speciaal hiervoor heeft e-Boekhouden.nl een plugin voor Magento ontwikkeld waarvan u geheel gratis gebruik kunt maken.&#xD;
+ &#xD;
+== Direct aan de slag! ==&#xD;
+De nieuwe extensie is zeer eenvoudig te installeren. U installeert 'm gewoon via uw Magento-webshop. Bij installatie wordt uw Magento-webshop gekoppeld aan uw administratie in e-Boekhouden.nl. U kunt vervolgens direct online orders exporteren naar uw boekhouding. U hoeft dus nooit meer handmatig orders in te voeren.&#xD;
+ &#xD;
+== Eenvoudig installeren ==&#xD;
+Er is een uitgebreide installatiehandleiding beschikbaar om u door de installatie van de module te leiden:&#xD;
+http://www.e-boekhouden.nl/handleiding/magento_connector.pdf&#xD;
+De handleiding ondersteunt u bij installatie van de Magento-module en neemt samen met u alle benodigde stappen om het koppelen succesvol te laten verlopen. De totale installatie duurt slechts enkele minuten.&#xD;
+ &#xD;
+== Alle voordelen op een rij ==&#xD;
+- De module is gratis voor abonnees van e-Boekhouden.nl.&#xD;
+- Geen wachttijd na installatie. De module is na installatie direct te gebruiken!&#xD;
+- Snel en eenvoudig installeren door de uitgebreide installatiehandleiding.&#xD;
+- Complete orders exporteren van uw webshop naar uw boekhouding met 1 klik op de knop.&#xD;
+- Alle orders zijn overzichtelijk in uw boekhouding terug te vinden.&#xD;
+ &#xD;
+Meer informatie over deze koppeling met Magento kunt u terugvinden als u ingelogd bent in e-Boekhouden onder 'Beheer&gt;Instellingen&gt;Magento'.&#xD;
+&#xD;
+-----------------------------------------------------&#xD;
+Info about uninstalling can be found in &#xD;
+app/code/community/Eboekhouden/Export/sql/HOWTO_UnInstall.sql</description>
+    <notes>Added 21% VAT percentage</notes>
+    <authors><author><name>Ronald Kas</name><user>eboekhoudennl</user><email>info@e-boekhouden.nl</email></author><author><name>Jeroen Vermeulen</name><user>jeroenvermeulen</user><email>info@jeroenvermeulen.eu</email></author></authors>
+    <date>2012-09-24</date>
+    <time>08:43:50</time>
+    <contents><target name="magecommunity"><dir name="Eboekhouden"><dir name="Export"><dir name="Block"><dir name="Config"><dir name="Info"><file name="Version.php" hash="e8957685d4f906457d1eb45853702e1f"/></dir></dir><dir name="Sales"><dir name="Creditmemo"><file name="Grid.php" hash="5d323b6842ac429c346fc1a00d8b38ee"/></dir><dir name="Invoice"><file name="Grid.php" hash="264f95548e6d5dd501a4c613fb38b3a8"/></dir><dir name="Order"><file name="Grid.php" hash="a1a9fe52f445f7f40e553b4c7f6dce99"/></dir></dir><dir name="Tax"><dir name="Rate"><file name="Form.php" hash="ea36d8fde2272e24f5187c0bfd9deb76"/><dir name="Grid"><dir name="Renderer"><file name="Ebvatcode.php" hash="d34d2edd9593e4d2c23a20c8e0864c95"/></dir></dir><file name="Grid.php" hash="ca50f669ccd75b1365d5937d0390fe3e"/></dir></dir></dir><dir name="Helper"><file name="AccountNumber.php" hash="599c8af6b93e2206c631aa79e9ba5dd4"/><file name="Data.php" hash="649880c1071e2453ae8536e89349527c"/></dir><dir name="Model"><dir name="Config"><file name="Costcenter.php" hash="7f280ef51e003de0bf80f0ab2b9685f0"/><file name="Ledgeraccount.php" hash="318e87f5932d4bd898d1552d27c50bc7"/><file name="Taxcalculationrate.php" hash="9871b70f56e8fee7cd3364bc8b3de2c5"/></dir><dir name="Export"><file name="Sales.php" hash="0d9ba76cd85ea7b408c774ca20af25ec"/></dir><dir name="Import"><file name="Costcenter.php" hash="593b1a269583073098f5c1f52002058f"/><file name="Ebcode.php" hash="4127f3460ccb06e800f88baf86a58008"/><file name="Gbcodes.php" hash="d513db427803e3c079f6577b7b240219"/></dir><file name="Info.php" hash="c8dbbbaeead14393cb36c0eec5706882"/><dir name="Product"><dir name="Attribute"><file name="Costcenter.php" hash="3b1e02791a8ff9782d18f14afdc90221"/><file name="Ledgeraccount.php" hash="132f16b2407b579605cb24de6ea5b6ab"/></dir></dir><dir name="Tax"><dir name="Attribute"><file name="Ebtaxcode.php" hash="0b34f8d566896c3fbab02ddaabf55536"/></dir></dir></dir><dir name="controllers"><dir name="Catalog"><file name="ProductController.php" hash="b19ff72404a75fcb1d89da436d3c68e9"/></dir><dir name="Export"><file name="SaleController.php" hash="c4f64b12685ad9558dff62f26ac7e6f2"/></dir><file name="MutatieController.php" hash="1634fcb7298ef44b369f9ac9fbdf87b4"/></dir><dir name="etc"><file name="config.xml" hash="f2149c87d73e48cc4ec3b4ba9d867c6f"/><file name="system.xml" hash="8f9f3db645acf4e736d80e4f50510428"/></dir><dir name="sql"><file name="HOWTO_UnInstall.sql" hash="691131453816d890630a6d3a21b6c7bf"/><dir name="eboekhouden_setup"><dir name="includes"><file name="install-current.php" hash="f603e6d7289c9791d5357093f403313a"/></dir><file name="mysql4-install-4.1.17.php" hash="8febe17420f3a5a2e99eb86605ab3dd3"/><file name="mysql4-upgrade-1.0.2-4.0.php" hash="8febe17420f3a5a2e99eb86605ab3dd3"/><file name="mysql4-upgrade-1.0.7-4.0.php" hash="8febe17420f3a5a2e99eb86605ab3dd3"/><file name="mysql4-upgrade-1.1.5-4.0.php" hash="8febe17420f3a5a2e99eb86605ab3dd3"/><file name="mysql4-upgrade-1.2.0-4.0.php" hash="8febe17420f3a5a2e99eb86605ab3dd3"/><file name="mysql4-upgrade-1.2.2-4.0.php" hash="e0ce8dbd2e1de28479e90505abbc6297"/><file name="mysql4-upgrade-1.2.6-4.0.php" hash="8febe17420f3a5a2e99eb86605ab3dd3"/><file name="mysql4-upgrade-1.3-4.0.php" hash="8febe17420f3a5a2e99eb86605ab3dd3"/><file name="mysql4-upgrade-1.4-4.0.php" hash="8febe17420f3a5a2e99eb86605ab3dd3"/><file name="mysql4-upgrade-1.5-4.0.php" hash="8febe17420f3a5a2e99eb86605ab3dd3"/><file name="mysql4-upgrade-1.6-4.0.php" hash="8febe17420f3a5a2e99eb86605ab3dd3"/><file name="mysql4-upgrade-2.0-4.0.php" hash="b1b333b3815368af7d599e5126eca26e"/><file name="mysql4-upgrade-3.0-4.0.php" hash="b1b333b3815368af7d599e5126eca26e"/></dir></dir></dir></dir></target><target name="mageetc"><dir name="modules"><file name="Eboekhouden_Export.xml" hash="9ced450b54f7225a83049f6bff3adbae"/></dir></target></contents>
+    <compatible/>
+    <dependencies><required><php><min>5.2.0</min><max>6.0.0</max></php></required></dependencies>
+</package>
