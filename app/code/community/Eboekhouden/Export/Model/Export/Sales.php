@@ -423,7 +423,7 @@ class Eboekhouden_Export_Model_Export_Sales
 
 	        if ($oContainer instanceof Mage_Sales_Model_Order_Invoice) {
 		        //add additional fee price (in case invoice price is higher then itemprice + shipping)
-		        $orderGrandTotal = round(floatval($oOrder->getGrandTotal()), 4);// + $oOrder->getDiscountInvoiced();
+		        $orderGrandTotal = round(floatval($oOrder->getGrandTotal()), 4) -  $oOrder->getDiscountInvoiced();
 
 
 
@@ -433,8 +433,9 @@ class Eboekhouden_Export_Model_Export_Sales
 			        $orderSubtotal = round(floatval($oOrder->getSubtotal()) + floatval($oOrder->getBaseShippingAmount()), 4);
 			        $orderTaxAmount = round(floatval($oOrder->getTaxAmount()), 4);
 
+
 			        $feeRowTotal = round($totalBaseAmountItems, 4) - $orderSubtotal;
-			        $feeRowTotalInclTax = round($totalBaseAmountInclTaxItems, 4) - $orderGrandTotal;
+			        $feeRowTotalInclTax = $orderGrandTotal - round($totalBaseAmountInclTaxItems, 4) ;
 			        $feeTaxAmount = round($totalBaseTaxItems, 4) - $orderTaxAmount;
 
 
@@ -454,7 +455,6 @@ class Eboekhouden_Export_Model_Export_Sales
             $sXml .= '
     </MUTATIEREGELS>
   </MUTATIE>';
-
 
 
             $sPostAction = (!empty($iExistingMutatieNr)) ? 'ALTER_MUTATIE' : 'ADD_MUTATIE';
