@@ -35,7 +35,7 @@
     <modules>
         <Eboekhouden_Export>
             <!-- When changing version: Don't forget to rename the mysql4-install script in sql/eboekhouden_setup -->
-            <version>4.1.18</version>
+            <version>4.1.25</version>
         </Eboekhouden_Export>
     </modules>
 

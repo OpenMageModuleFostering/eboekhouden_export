@@ -3,7 +3,7 @@
     "type": "magento-module",
     "license": "MIT",
     "homepage": "",
-    "description": "Directe export van bestellingen en facturen naar www.e-Boekhouden.nl",
+    "description": "Directe export van bestellingen en facturen naar www.e-Boekhouden.nl.",
     "authors": [
     {
         "name": "Ronald Kas",

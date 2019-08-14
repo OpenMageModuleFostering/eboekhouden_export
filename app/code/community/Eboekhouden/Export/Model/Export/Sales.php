@@ -386,7 +386,7 @@ class Eboekhouden_Export_Model_Export_Sales
                      && 0 < $oContainer->getBaseDiscountAmount()
                      && $fDiscountLeft >= 0.01 )
                 {
-                    // There is discount applied on the order but not on the sipping cost
+                    // There is discount applied on the order but not on the shipping cost
                     // and there is discount left. That discount must be for the shipping, so let's add it.
                     $oShippingItem->setBaseDiscountAmount($fDiscountLeft);
                 }
@@ -608,8 +608,18 @@ class Eboekhouden_Export_Model_Export_Sales
                 if ( $this->_oTaxConfig->applyTaxAfterDiscount() )
                 {
                     // Apply Tax after Discount
-                    $fPriceIn = ( $oItem->getBaseRowTotal() - $fDiscountAmount ) * $fVatFactor;
-                    $sComment .= ' ['.$fPriceIn.' = ('.$oItem->getBaseRowTotal().' - '.$fDiscountAmount.') * '.$fVatFactor.'] ';
+                    if ( $this->_oTaxConfig->discountTax() )
+                    {
+                        // Apply Discount On Prices: Including Tax
+                        $fDiscountAmountEx = $fDiscountAmount / $fVatFactor;
+                    }
+                    else
+                    {
+                        // Apply Discount On Prices: Excluding Tax
+                        $fDiscountAmountEx = $fDiscountAmount;
+                    }
+                    $fPriceIn = ( $oItem->getBaseRowTotal() - $fDiscountAmountEx ) * $fVatFactor;
+                    $sComment .= ' ['.$fPriceIn.' = ('.$oItem->getBaseRowTotal().' - '.$fDiscountAmountEx.') * '.$fVatFactor.'] ';
                 }
                 else
                 {
@@ -631,6 +641,7 @@ class Eboekhouden_Export_Model_Export_Sales
             $iProductTaxClassId = false;
             $iGbRekening = false;
             $iCostcenter = false;
+            $sProductId = $oItem->getProductId();
 
             if (!empty($sProductId))
             {
@@ -643,7 +654,7 @@ class Eboekhouden_Export_Model_Export_Sales
                 {
                     $sComment .= $oItem->getTitle().': ';
                 }
-                
+
                 if ('shipping' == $sProductId)
                 {
                     $iGbRekening = $aSettings['sShipLedgerAcc'];
@@ -717,17 +728,29 @@ class Eboekhouden_Export_Model_Export_Sales
         $iResult = false;
         $iStoreId = $oOrder->getStoreId();
         $iCustomerId = $oOrder->getCustomerId();
-        // Set default group id first
-        $iCustomerGroupId = Mage::getStoreConfig('customer/create_account/default_group', $iStoreId);
-        if (!empty($iCustomerId))
+
+        if ( !empty($iCustomerId) )
         {
             $oCustomer = Mage::getModel('customer/customer')->load($iCustomerId);
-            /* @var $oCustomer Mage_Customer_Model_Customer */
-            $iCustomerGroupId = $oCustomer->getGroupId();
+            $iResult = $oCustomer->getTaxClassId();
         }
-        $oCustomerGroup = Mage::getModel('customer/group')->load($iCustomerGroupId);
-        /* @var $oCustomerGroup Mage_Customer_Model_Group */
-        $iResult = $oCustomerGroup->getTaxClassId();
+
+        if ( empty($iResult) )
+        {
+            // We need to get the tax class id based on the customer group.
+            // Set default group id first
+            $iCustomerGroupId = Mage::getStoreConfig('customer/create_account/default_group', $iStoreId);
+            if (!empty($iCustomerId))
+            {
+                $oCustomer = Mage::getModel('customer/customer')->load($iCustomerId);
+                /* @var $oCustomer Mage_Customer_Model_Customer */
+                $iCustomerGroupId = $oCustomer->getGroupId();
+            }
+            $oCustomerGroup = Mage::getModel('customer/group')->load($iCustomerGroupId);
+            /* @var $oCustomerGroup Mage_Customer_Model_Group */
+            $iResult = $oCustomerGroup->getTaxClassId();
+        }
+
         return $iResult;
     }
 
@@ -767,10 +790,22 @@ class Eboekhouden_Export_Model_Export_Sales
             $fVatPercent = 0;
             if (  !empty($fTempPriceEx)
                && is_numeric($fTempPriceEx)
-               && 0 != 1 * $fTempPriceEx
-               ) // prevent division by zero
+               && 0 != 1 * $fTempPriceEx  // prevent division by zero
+               )
             {
                 $fVatPercent = 100 * $fTempTaxAmount / $fTempPriceEx;
+            }
+
+            if (  0 == $fVatPercent                                       // No VAT precentage found yet
+               && $oItem->getBasePriceInclTax() != $oItem->getBasePrice() // Non-discount In and Ex price is not the same
+               && 0 < $oItem->getBaseHiddenTaxAmount()                    // - prevent division by zero
+               )
+            {
+                // In this case we calculate VAT based on the price before discount.
+                // It is important to find the right VAT percentage because it is used for several calculations
+                // even if the total row amount is 0.
+                $fOriginalVatAmount = $oItem->getBasePriceInclTax() - $oItem->getBasePrice();
+                $fVatPercent = 100 * $fOriginalVatAmount / $oItem->getBasePrice();
             }
         }
         $fVatPercent = floatval($fVatPercent);
@@ -888,9 +923,13 @@ class Eboekhouden_Export_Model_Export_Sales
             {
                 $sVatCode = 'LAAG_VERK';
             }
-            else
+            elseif (19 == $fVatPercent)
             {
                 $sVatCode = 'HOOG_VERK';
+            }
+            else
+            {
+                $sVatCode = 'HOOG_VERK_21';
             }
         }
 

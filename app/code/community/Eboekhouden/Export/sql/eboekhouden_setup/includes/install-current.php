@@ -98,7 +98,10 @@ $sTaxCalcRateField = 'tax_ebvatcode';
 if (!$oConnection->tableColumnExists($sTaxCalcRateTable, $sTaxCalcRateField))
 {
     $oConnection->addColumn($sTaxCalcRateTable, $sTaxCalcRateField, 'VARCHAR(20) NULL');
-    $oConnection->resetDdlCache($sTaxCalcRateTable);
+    if ( method_exists($oConnection,'resetDdlCache') )
+    {
+        $oConnection->resetDdlCache($sTaxCalcRateTable);
+    }
 }
 
 // Try to convert old vat code settings from configuration to new settings via calculation_rate
