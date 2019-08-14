@@ -582,7 +582,7 @@ class Eboekhouden_Export_Model_Export_Sales
 
         $sType = $this->_getItemType( $oItem );
 
-        if ( 'dummy' != $sType && 'child' != $sType )
+        if ( 'dummy' != $sType && 'bundle' != $sType )
         {
             $iStoreId = $oContainer->getStoreId();
             if (empty($iStoreId))
