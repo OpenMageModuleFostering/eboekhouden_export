@@ -311,7 +311,7 @@ class Eboekhouden_Export_Model_Export_Sales
 
             $iGbRekening = $iCostcenter = 0;
             foreach ($aOrderItems as $oItem) {
-                $pType = $this->_getItemType($oItem);
+                $sType = $this->_getItemType($oItem);
 
                 $BEDRAGINCL = $oItem->getRowTotal() + $oItem->getTaxAmount() + $oItem->getHiddenTaxAmount() + Mage::helper('weee')->getRowWeeeAmountAfterDiscount($oItem) - $oItem->getDiscountAmount();
                 $BEDRAGEXCL = $BEDRAGINCL / (1 + ($oItem->getOrderItem()->getTaxPercent() / 100));
@@ -342,13 +342,30 @@ class Eboekhouden_Export_Model_Export_Sales
                 {
                     $iCostcenter = 0;
                 }
-                $sComment = 'type:'. $pType . ' [BTW '. (int) $oItem->getOrderItem()->getTaxPercent() . '%]';
+                $sComment = 'type:'. $sType . ' [BTW '. (int) $oItem->getOrderItem()->getTaxPercent() . '%]';
 
                 if ($oContainer instanceof Mage_Sales_Model_Order_Creditmemo) {
                     $BEDRAGINCL = -1 * $BEDRAGINCL;
                     $BEDRAGEXCL = -1 * $BEDRAGEXCL;
 
                 }
+
+
+                $addItem = 'dummy' != $sType && 'bundle' != $sType;
+
+                if ('bundle' == $sType) {
+                    $oProduct = $this->_getProduct($oItem);
+                    $addItem = $oProduct->getPriceType() == '1'; // priceType '1' is Fixed
+                } else if ($sType == 'child') {
+                    $oParentItem = Mage::getModel('sales/order_item')->load($this->_getOrderItem($oItem)->getParentItemId());
+                    if ($this->_getItemType( $oParentItem ) == 'bundle') {
+                        $oProduct = $this->_getProduct($oParentItem);
+                        $addItem = $oProduct->getPriceType() != '1'; // priceType '1' is Fixed
+                    }
+                }
+
+                if($addItem) {
+
                  $sXml .= '
                   <MUTATIEREGEL>
                     <!-- ' . $oHelper->xmlPrepare($sComment) . ' -->
@@ -359,10 +376,12 @@ class Eboekhouden_Export_Model_Export_Sales
                     <TEGENREKENING>' . $oHelper->xmlPrepare($iGbRekening) . '</TEGENREKENING>
                     <KOSTENPLAATS>' . $oHelper->xmlPrepare($iCostcenter) . '</KOSTENPLAATS>
                   </MUTATIEREGEL>';
+              }
 
                   $totalBaseAmountItems += $BEDRAGEXCL;
                   $totalBaseAmountInclTaxItems += $BEDRAGINCL;
                   $totalBaseTaxItems += $BEDRAGINCL - $BEDRAGEXCL;
+                  $fDiscountLeft -= $oItem->getDiscountAmount();
 
             }
 
@@ -458,6 +477,8 @@ class Eboekhouden_Export_Model_Export_Sales
             $sXml .= '
     </MUTATIEREGELS>
   </MUTATIE>';
+
+
 
             $sPostAction = (!empty($iExistingMutatieNr)) ? 'ALTER_MUTATIE' : 'ADD_MUTATIE';
             list($sThisMutatieNr, $iThisExist, $sThisErrorMsg, $sThisInfoMsg) = $this->_postMutatieXml($sXml,
@@ -781,7 +802,6 @@ class Eboekhouden_Export_Model_Export_Sales
             $sXml .= '
     </MUTATIEREGELS>
   </MUTATIE>';
-
             $sPostAction = (!empty($iExistingMutatieNr)) ? 'ALTER_MUTATIE' : 'ADD_MUTATIE';
             list($sThisMutatieNr, $iThisExist, $sThisErrorMsg, $sThisInfoMsg) = $this->_postMutatieXml($sXml,
                                                                                                        $aSettings,
