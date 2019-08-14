@@ -392,6 +392,7 @@ class Eboekhouden_Export_Model_Export_Sales
                 $fShipFactor = 1;
                 if ($oContainer instanceof Mage_Sales_Model_Order_Creditmemo)
                 {
+                    /*
                     // We need to find out which part of the shippingcost is refunded.
                     // Magento only updates the BaseShippingAmount for a CreditMemo.
                     $fBaseShippingAmount = $oOrder->getBaseShippingAmount();
@@ -402,6 +403,7 @@ class Eboekhouden_Export_Model_Export_Sales
                     {
                         $fShipFactor = $oContainer->getBaseShippingAmount() / $fBaseShippingAmount;
                     }
+                    */
                 }
                 //add to order totals
                 $totalBaseTaxItems += $fShipFactor * $oContainer->getBaseShippingTaxAmount();
