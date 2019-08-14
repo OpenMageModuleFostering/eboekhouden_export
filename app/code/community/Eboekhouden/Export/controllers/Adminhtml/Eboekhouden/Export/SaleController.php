@@ -29,7 +29,7 @@
  * @license    http://opensource.org/licenses/mit-license.php  The MIT License
  * @author     e-Boekhouden.nl
  */
-class Eboekhouden_Export_Export_SaleController extends Mage_Adminhtml_Controller_Action
+class Eboekhouden_Export_Adminhtml_Eboekhouden_Export_SaleController extends Mage_Adminhtml_Controller_Action
 {
 
     public function orderExportAction()

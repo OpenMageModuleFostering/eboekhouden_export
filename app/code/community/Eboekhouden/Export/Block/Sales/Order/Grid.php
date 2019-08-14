@@ -40,7 +40,7 @@ class Eboekhouden_Export_Block_Sales_Order_Grid extends Mage_Adminhtml_Block_Sal
         $this->getMassactionBlock()->addItem(
             'eboekhouden',
             array('label' => Mage::helper('Eboekhouden_Export')->__('Export naar e-Boekhouden.nl'),
-                 'url' => $this->getUrl('eboekhouden/export_sale/orderexport'))
+                 'url' => $this->getUrl('adminhtml/eboekhouden_export_sale/orderexport'))
         );
 
         $sExtensionFile = BP . DS . 'app' . DS . 'code' . DS . 'community' . DS . 'BoutikCircus' . DS . 'DeleteOrders' . DS . 'Block' . DS . 'Grid.php';

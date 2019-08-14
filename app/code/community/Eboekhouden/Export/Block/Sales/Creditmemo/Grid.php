@@ -38,7 +38,7 @@ class Eboekhouden_Export_Block_Sales_Creditmemo_Grid extends Mage_Adminhtml_Bloc
         $this->getMassactionBlock()->addItem(
             'eboekhouden',
             array('label' => Mage::helper('Eboekhouden_Export')->__('Export naar e-Boekhouden.nl'),
-                 'url' => $this->getUrl('eboekhouden/export_sale/creditmemoexport'))
+                 'url' => $this->getUrl('adminhtml/eboekhouden_export_sale/creditmemoexport'))
         );
     }
 

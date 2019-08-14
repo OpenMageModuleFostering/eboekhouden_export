@@ -31,7 +31,7 @@
  */
 require_once 'Mage/Adminhtml/controllers/Catalog/ProductController.php';
 
-class Eboekhouden_Export_Catalog_ProductController extends Mage_Adminhtml_Catalog_ProductController
+class Eboekhouden_Export_Adminhtml_Eboekhouden_Catalog_ProductController extends Mage_Adminhtml_Catalog_ProductController
 {
 
     public function eboekhoudenAction()

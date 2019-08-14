@@ -37,7 +37,7 @@ class Eboekhouden_Export_Block_Sales_Invoice_Grid extends Mage_Adminhtml_Block_S
         $this->getMassactionBlock()->addItem(
             'eboekhouden',
             array('label' => Mage::helper('Eboekhouden_Export')->__('Export naar e-Boekhouden.nl'),
-                 'url' => $this->getUrl('eboekhouden/export_sale/invoiceexport'))
+                 'url' => $this->getUrl('adminhtml/eboekhouden_export_sale/invoiceexport'))
         );
     }
 

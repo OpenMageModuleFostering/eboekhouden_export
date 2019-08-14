@@ -35,7 +35,7 @@
     <modules>
         <Eboekhouden_Export>
             <!-- When changing version: Don't forget to rename the mysql4-install script in sql/eboekhouden_setup -->
-            <version>4.1.39</version>
+            <version>4.1.40</version>
         </Eboekhouden_Export>
     </modules>
 
@@ -91,19 +91,17 @@
         </resources>
 
     </global>
-
     <admin>
         <routers>
-            <Eboekhouden_Export>
-                <use>admin</use>
+            <adminhtml>
                 <args>
-                    <module>Eboekhouden_Export</module>
-                    <frontName>eboekhouden</frontName>
+                    <modules>
+                        <Eboekhouden_Export before="Mage_Adminhtml">Eboekhouden_Export_Adminhtml</Eboekhouden_Export>
+                    </modules>
                 </args>
-            </Eboekhouden_Export>
+            </adminhtml>
         </routers>
     </admin>
-
     <adminhtml>
         <menu>
             <system>
@@ -114,7 +112,7 @@
                         <children>
                             <eboekhouden_reset_mutatie_nummers translate="title" module="Eboekhouden_Export">
                                 <title>Reset alle mutatie nummers</title>
-                                <action>eboekhouden/mutatie/reset_all</action>
+                                <action>adminhtml/eboekhouden_mutatie/reset_all</action>
                                 <sort_order>10</sort_order>
                             </eboekhouden_reset_mutatie_nummers>
                             <eboekhouden_config translate="title" module="Eboekhouden_Export">

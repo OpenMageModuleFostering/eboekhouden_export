@@ -1,7 +1,7 @@
 <?php
 
 // index.php/eboekhouden/mutatie/reset_all/key/XXXXXXXXXX/
-class Eboekhouden_Export_MutatieController extends Mage_Adminhtml_Controller_Action
+class Eboekhouden_Export_Adminhtml_Eboekhouden_MutatieController extends Mage_Adminhtml_Controller_Action
 {
     public function indexAction()
     {
