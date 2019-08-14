@@ -582,7 +582,22 @@ class Eboekhouden_Export_Model_Export_Sales
 
         $sType = $this->_getItemType( $oItem );
 
-        if ( 'dummy' != $sType && 'bundle' != $sType )
+        $addItem = 'dummy' != $sType && 'bundle' != $sType;
+
+        if ('bundle' == $sType) {
+            $oProduct = $this->_getProduct($oItem);
+            $addItem = $oProduct->getPriceType() == '1'; // priceType '1' is Fixed
+        } else if ($sType == 'child') {
+            $oParentItem = Mage::getModel('sales/order_item')->load($this->_getOrderItem($oItem)->getParentItemId());
+
+            if ($this->_getItemType( $oParentItem ) == 'bundle') {
+                $oProduct = $this->_getProduct($oParentItem);
+
+                $addItem = $oProduct->getPriceType() != '1'; // priceType '1' is Fixed
+            }
+        }
+
+        if ($addItem)
         {
             $iStoreId = $oContainer->getStoreId();
             if (empty($iStoreId))
@@ -993,6 +1008,33 @@ class Eboekhouden_Export_Model_Export_Sales
         }
 
         return  $aResult;
+    }
+
+    /**
+     * Get the product of the given object
+     *
+     * @param Object &$oItem OrderItem or InvoiceItem
+     *
+     * @return ProductModel The product of the given OrderItem
+     */
+    private function _getProduct( &$oItem ) {
+        return Mage::getModel('catalog/product')->load($this->_getOrderItem($oItem)->getProductId());
+    }
+
+    /**
+     * Get the order item from the given object, could be InvoiceItem or OrderItem
+     *
+     * @param Object $oItem The OrderItem or InvoiceItem
+     *
+     * @return OrderItem The OrderItem of the given object
+     */
+    private function _getOrderItem( &$oItem ) {
+        if ( $oItem instanceof Mage_Sales_Model_Order_Item )
+        {
+            return $oItem;
+        }
+
+        return $oItem->getOrderItem();
     }
 
     /**
