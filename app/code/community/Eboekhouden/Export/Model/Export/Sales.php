@@ -673,7 +673,7 @@ class Eboekhouden_Export_Model_Export_Sales
 
             if (!empty($fDiscountAmount) && 0 < $fDiscountAmount)
             {
-                var_dump($this->_oTaxConfig->applyTaxAfterDiscount());
+               # var_dump($this->_oTaxConfig->applyTaxAfterDiscount());
                 if ( $this->_oTaxConfig->applyTaxAfterDiscount() )
                 {
                     // Apply Tax after Discount
