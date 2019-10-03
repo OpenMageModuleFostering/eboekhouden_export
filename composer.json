@@ -1,16 +1,19 @@
 {
-    "name": "OpenMageModuleFostering/EBoekhouden_Export",
+    "name": "OpenMageModuleFostering\/EBoekhouden_Export",
     "type": "magento-module",
     "license": "MIT",
     "homepage": "",
     "description": "Directe export van bestellingen en facturen naar www.e-Boekhouden.nl.",
     "authors": [
-    {
-        "name": "Ronald Kas",
-        "email": "info@e-boekhouden.nl"
-    }
-],
+        {
+            "name": "Ronald Kas",
+            "email": "info@e-boekhouden.nl"
+        }
+    ],
     "suggest": {
-        "magento-hackathon/magento-composer-installer": "*"
-    }
+        "magento-hackathon\/magento-composer-installer": "*"
+    },
+    "keywords": [
+        "openmage-module"
+    ]
 }
